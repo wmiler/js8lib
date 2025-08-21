@@ -6,3 +6,6 @@
 	path = Hamlib
 	url = https://github.com/Hamlib/Hamlib.git
 	branch = Hamlib-4.6.3
+[submodule "libusb"]
+	path = libusb
+	url = https://github.com/libusb/libusb.git

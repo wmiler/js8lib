@@ -1,0 +1,3 @@
+[submodule "Qt6"]
+	path = Qt6
+	url = https://github.com/qt/qt5

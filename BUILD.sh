@@ -39,7 +39,7 @@ cd ~/development/JS8Call/submodules/boost
 ./b2 -a install
 
 #Build Qt6
-cd ~/development/JS8Call && mkdir qt-build && cd qt-build
+cd ~/development/JS8Call && mkdir qt6-build && cd qt6-build
 ~/development/JS8Call/submodules/Qt6/configure -prefix $HOME/development/JS8Call/js8lib -submodules qtbase,qtimageformats,qtmultimedia,qtserialport,qtsvg
 cmake --build . --parallel
 cmake --install .

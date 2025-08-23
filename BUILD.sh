@@ -16,19 +16,15 @@ if [ ! -d $HOME/development/JS8Call ]; then
     exit;
 fi
 
-if [ -d $HOME/development/JS8Call/src ]; then
-    echo "$HOME/development/JS8Call/src directory already exists"
-    echo "delete it or archive it, then run this script again"
-    echo "exiting......."
-    exit;
-fi
-
 if [ -d $HOME/development/JS8Call/js8lib ]; then
     echo "$HOME/development/JS8Call/js8lib directory already exists"
     echo "delete it or archive it, then run this script again"                        
     echo "exiting......."
     exit;
 fi
+
+cd ~/development/JS8Call/submodules
+git submodule update --init --recursive
 
 mkdir ~/development/JS8Call/js8lib
 
@@ -113,42 +109,12 @@ fi
 
 clear
 
-echo "--------------------------------------------------------------------"
-echo "         validating library build........."
-echo "--------------------------------------------------------------------"
-
-if cd $HOME/development/JS8Call
-    git clone https://github.com/js8call/js8call.git src
-    cd src && mkdir build && cd build
-    cmake -DCMAKE_PREFIX_PATH=~/development/JS8Call/js8lib \
-      -DCMAKE_BUILD_TYPE=Release ..; then
-    echo "--------------------------------------------------------------------"
-    echo "         library validated: build successful........."
-    echo "--------------------------------------------------------------------"
-    sleep 2
-    echo "--------------------------------------------------------------------"
-    echo "         cleaning source tree........."
-    echo "--------------------------------------------------------------------"
-    sleep 2
-    rm -rf $Home/development/JS8Call/qt6-build src
-    cd ~/development/JS8Call/submodules && git clean -fd
-    git restore *
-    clear
-else
-    echo "--------------------------------------------------------------------"
-    echo "  build failed: library is corrupted or missing components..."
-    echo "--------------------------------------------------------------------"
-    exit;
-fi
-
 cd $HOME/development/JS8Call
 arch=$(uname -m)
 platform=$(uname)
 
 # create downloadable pre-built library archive
 tar -czvf js8lib-2.3_${platform}_${arch}.tar.gz js8lib
-
-clear
 
 echo "library archive created in $Home/development/JS8Call...."
 echo "    DONE!    "

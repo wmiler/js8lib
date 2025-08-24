@@ -1,37 +1,28 @@
 #!/bin/sh
 clear
 echo "--------------------------------------------------------------------"
-echo "         Initalizing submodules........."
-echo "--------------------------------------------------------------------"
-clear
-echo "--------------------------------------------------------------------"
 echo "         Building js8lib........."
 echo "--------------------------------------------------------------------"
 sleep 2
 
-if [ ! -d $HOME/development/JS8Call ]; then
+if [ ! -d /usr/local/js8lib ]; then
     echo "directory structure does not exist!"
-    echo "$HOME/development/JS8Call must be created and the submodules cloned into it"
+    echo "/usr/local/js8lib must be created and be writeable by your username before running the build"
+    echo "see README.md"
     echo "exiting......."
     exit;
 fi
 
-if [ -d $HOME/development/JS8Call/js8lib ]; then
-    echo "$HOME/development/JS8Call/js8lib directory already exists"
-    echo "delete it or archive it, then run this script again"                        
-    echo "exiting......."
-    exit;
-fi
+# set variables
+SUBMODULES=$(PWD)
+PREFIX="/usr/local/js8lib"
+ARCH="$(uname -m)"
+PLATFORM="$(uname)"
 
-cd ~/development/JS8Call/submodules
-git submodule update --init --recursive
-
-mkdir ~/development/JS8Call/js8lib
-
-# Build libusb
-cd ~/development/JS8Call/submodules/libusb
+####### Build libusb #######
+cd ${SUBMODULES}/libusb
 if  ./bootstrap.sh
-    ./configure --prefix=$HOME/development/JS8Call/js8lib
+    ./configure --prefix=/usr/local/js8lib
     make && make install
     make clean; then
     echo "--------------------------------------------------------------------"
@@ -46,10 +37,10 @@ else
     exit;
 fi
 
-# Build Hamlib
-cd ~/development/JS8Call/submodules/Hamlib
+####### Build Hamlib #######
+cd ../Hamlib
 if  ./bootstrap
-    ./configure --prefix=$HOME/development/JS8Call/js8lib
+    ./configure --prefix=${PREFIX}
     make && make install
     make clean; then
         echo "--------------------------------------------------------------------"
@@ -64,9 +55,9 @@ else
     exit;
 fi
 
-# Build fftw
-if cd ~/development/JS8Call/submodules/fftw
-    ./configure --prefix=$HOME/development/JS8Call/js8lib --enable-single --enable-threads
+####### Build fftw #######
+if cd ../fftw
+    ./configure --prefix=${PREFIX} --enable-single --enable-threads
     make && make install
     make clean; then
         echo "--------------------------------------------------------------------"
@@ -81,18 +72,18 @@ else
     exit;
 fi
 
-# Build boost
-    cd ~/development/JS8Call/submodules/boost
-    ./bootstrap.sh --prefix=$HOME/development/JS8Call/js8lib
+####### Build boost #######
+    cd ../boost
+    ./bootstrap.sh --prefix=${PREFIX}
     ./b2 -a install
     echo "--------------------------------------------------------------------"
     echo "         boost-v1.88.0 build successful........."
     echo "--------------------------------------------------------------------"
     sleep 5
 
-#Build Qt6
-cd ~/development/JS8Call && mkdir qt6-build && cd qt6-build
-if  ~/development/JS8Call/submodules/Qt6/configure -prefix $HOME/development/JS8Call/js8lib -submodules qtbase,qtimageformats,qtmultimedia,qtserialport,qtsvg
+####### Build Qt6 #######
+cd cd .. && mkdir qt6-build && cd qt6-build
+if  ${SUBMODULES}/Qt6/configure -prefix ${PREFIX} -submodules qtbase,qtimageformats,qtmultimedia,qtserialport,qtsvg
     cmake --build . --parallel
     cmake --install . ; then
     echo "--------------------------------------------------------------------"
@@ -107,14 +98,50 @@ else
     exit;
 fi
 
+cd .. && rm -rf qt6-build
+cd ${SUBMODULES} && git clean -fdx
+git restore *
+cd ..
+
 clear
 
-cd $HOME/development/JS8Call
-arch=$(uname -m)
-platform=$(uname)
+echo "--------------------------------------------------------------------"
+echo "syncing libraries............."
+echo "setting linker @rpath relative values for embedded libraries......"
+echo "--------------------------------------------------------------------"
+sleep 5
+
+if [ -d ./js8lib ]; then
+    mv ./js8lib ./js8lib_old && mkdir ./js8lib
+  else
+    mkdir ./js8lib
+fi
+
+rsync -arvz /usr/local/js8lib/ ./js8lib/
+
+cd ./js8lib/lib
+install_name_tool -id @rpath/libhamlib.4.dylib libhamlib.4.dylib
+install_name_tool -id @rpath/libusb-1.0.0.dylib libusb-1.0.0.dylib
+
+cd ../..
 
 # create downloadable pre-built library archive
-tar -czvf js8lib-2.3_${platform}_${arch}.tar.gz js8lib
+tar -czvf js8lib-2.3_${PLATFORM}_${ARCH}.tar.gz js8lib
 
-echo "library archive created in $Home/development/JS8Call...."
-echo "    DONE!    "
+# clean up build artifacts
+if [ -d ./js8lib_old ]; then
+    rm -rf ./js8lib
+    mv ./js8lib_old ./js8lib
+else
+    rm -rf ./js8lib
+fi
+
+setopt localoptions rmstarsilent
+rm -rf /user/local/js8lib/*
+
+clear
+echo "--------------------------------------------------------------------"
+echo "   DONE!    "
+echo "library archive created"
+echo "It is recommended to unpack it and try a JS8Call build to validate it"
+echo "--------------------------------------------------------------------"

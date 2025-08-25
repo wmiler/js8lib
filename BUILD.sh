@@ -57,7 +57,7 @@ fi
 
 ####### Build fftw #######
 if cd ../fftw
-    ./configure --prefix=${PREFIX} --enable-single --enable-threads
+./configure CFLAGS="-mmacosx-version-min=12.0" --prefix=${PREFIX} --enable-single --enable-threads 
     make && make install
     make clean; then
         echo "--------------------------------------------------------------------"

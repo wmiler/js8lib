@@ -111,37 +111,36 @@ echo "setting linker @rpath relative values for embedded libraries......"
 echo "--------------------------------------------------------------------"
 sleep 5
 
-if [ -d ./js8lib ]; then
-    mv ./js8lib ./js8lib_old && mkdir ./js8lib
-  else
-    mkdir ./js8lib
-fi
+#if [ -d ./js8lib ]; then
+#    mv ./js8lib ./js8lib_old && mkdir ./js8lib
+#  else
+#    mkdir ./js8lib
+#fi
 
 rsync -arvz /usr/local/js8lib/ ./js8lib/
 
-cd ./js8lib/lib
+cd /usr/local/js8lib/lib
 install_name_tool -id @rpath/libhamlib.4.dylib libhamlib.4.dylib
 install_name_tool -id @rpath/libusb-1.0.0.dylib libusb-1.0.0.dylib
 
-cd ../..
+cd ${SUBMODULES}/..
 
 # create downloadable pre-built library archive
 tar -czvf js8lib-2.3_${PLATFORM}_${ARCH}.tar.gz js8lib
 
 # clean up build artifacts
-if [ -d ./js8lib_old ]; then
-    rm -rf ./js8lib
-    mv ./js8lib_old ./js8lib
-else
-    rm -rf ./js8lib
-fi
-
-setopt localoptions rmstarsilent
-rm -rf /user/local/js8lib/*
+#if [ -d ./js8lib_old ]; then
+#    rm -rf ./js8lib
+#    mv ./js8lib_old ./js8lib
+#else
+#    rm -rf ./js8lib
+#fi
 
 clear
 echo "--------------------------------------------------------------------"
 echo "   DONE!    "
 echo "library archive created"
-echo "It is recommended to unpack it and try a JS8Call build to validate it"
+echo "It is recommended to try a JS8Call build using /usr/local/js8lib"
+echo "as the PREFIX_PATH to validate your build. If satisfied you can"
+echo "delete the files in /usr/local/js8lib"
 echo "--------------------------------------------------------------------"

@@ -76,7 +76,7 @@ jobs:
           body: |
             Release created automatically from commit.
             This release is for use in the Windows MSYS2 CI builds for JS8Call. Use at your own risk!
-          files: hamlib-windows-msys2-binaries-ci.zip
+          files: "D:/a/js8lib/hamlib-windows-msys2-binaries-ci.zip"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           

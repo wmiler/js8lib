@@ -3,8 +3,6 @@ name: Build Hamlib SDK on Windows (MSYS2)
 on:
   push:
     branches: [ "main" ]
-    paths:
-      '.github/workflows/hamlib-msys.yml'
 
 jobs:
   build-hamlib-windows-msys2:

@@ -49,7 +49,7 @@ jobs:
         run: ./bootstrap
 
       - name: Configure Hamlib
-        run: ./configure --prefix=/d/a/js8call/hamlib-install
+        run: ./configure --prefix=/d/a/js8lib/hamlib-install
 
       - name: Build Hamlib
         run: make
@@ -61,12 +61,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hamlib-windows-msys2-binaries
-          path: "D:/a/js8call/hamlib-install/"
+          path: "D:/a/js8lib/hamlib-install/"
           
       - name: Create zip file to upload to release page
         run: |
-          cd "D:/a/js8call/hamlib-install/"
-          zip -r /d/a/js8call/js8call/hamlib-windows-msys2-binaries-ci.zip .
+          cd "D:/a/js8lib/hamlib-install/"
+          zip -r "D:/a/js8lib/hamlib-windows-msys2-binaries-ci.zip" .
 
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2.3.2

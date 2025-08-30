@@ -7,4 +7,4 @@
 [submodule "Qt6"]
         path = Qt6
         url = https://github.com/qt/qt5.git
-        branch = 6.8.1
+        branch = 6.6.3

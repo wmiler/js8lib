@@ -1,10 +1,8 @@
-name: Build Hamlib SDK on Windows (MSYS2)
+name: Build Hamlib 4.6.4 SDK on Windows (MSYS2)
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  schedule:
+  - cron: '7 4 17 * *' # Example: Runs monthly at 4:07am UTC on the 17th day
     
 jobs:
   build-hamlib-windows-msys2:
@@ -74,7 +72,7 @@ jobs:
           tag_name: hamlib-v4.6.4-ci
           name: "Hamlib v4.6.4 for Windows MSYS2 CI build"
           body: |
-            Release created automatically from commit.
+            Release created automatically.
             This release is for use in the Windows MSYS2 CI builds for JS8Call. Use at your own risk!
           files: "D:/a/js8lib/hamlib-windows-msys2-binaries-ci.zip"
         env:

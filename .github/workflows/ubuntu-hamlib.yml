@@ -1,6 +1,7 @@
 name: Build Hamlib 4.6.4 SDK for Linux
 
 on:
+  workflow_dispatch:
   schedule:
   - cron: '9 4 17 * *' # Example: Runs monthly at 4:09am UTC on the 17th day
 

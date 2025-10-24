@@ -1,0 +1,57 @@
+name: Build Hamlib 4.6.4 SDK for Linux
+
+on:
+  schedule:
+  - cron: '9 4 17 * *' # Example: Runs monthly at 4:09am UTC on the 17th day
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build_hamlib_amd:
+      runs-on: ${{ matrix.os }}
+      strategy:
+      matrix:
+        os: [ubuntu-latest]
+  steps:
+    - name: Free Disk Space (Ubuntu)
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: false
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential git cmake ninja-build clang-18 libclang-18-dev llvm-18-dev
+
+    - name: Build Hamlib
+      run: |
+        ldd --version
+        git clone https://github.com/Hamlib/Hamlib.git ~/hamlib
+        cd ~/hamlib
+        git checkout 4.6.4
+        ./bootstrap
+        ./configure
+        make -j 4
+        sudo make install-strip
+        sudo ldconfig
+                
+    - name: Create Release and Upload Assets
+      uses: softprops/action-gh-release@v2.3.2
+      with:
+        tag_name: js8call_hamlib-4.6.4-${{ matrix.os }}-amd64-ci
+        name: "JS8Call hamlib 4.6.4 ${{ matrix.os }} amd64"
+        body: |
+          Release created automatically.
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

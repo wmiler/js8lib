@@ -20,7 +20,7 @@ ARCH="$(uname -m)"
 PLATFORM="$(uname)"
 
 ####### Build libusb #######
-cd ${SUBMODULES}/libusb
+cd ${SUBMODULES}/submodules/libusb
 if  ./bootstrap.sh
     ./configure --prefix=/usr/local/js8lib
     make && make install
@@ -56,8 +56,8 @@ else
 fi
 
 ####### Build fftw #######
-if cd ../fftw
-./configure CFLAGS="-mmacosx-version-min=12.0" --prefix=${PREFIX} --enable-single --enable-threads 
+if cd ../../fftw
+./configure CFLAGS="-mmacosx-version-min=12.0" --prefix=${PREFIX} --enable-single --enable-threads
     make && make install
     make clean; then
         echo "--------------------------------------------------------------------"
@@ -82,7 +82,7 @@ fi
     sleep 5
 
 ####### Build Qt6 #######
-cd cd .. && mkdir qt6-build && cd qt6-build
+cd .. && mkdir qt6-build && cd qt6-build
 if  ${SUBMODULES}/Qt6/configure -prefix ${PREFIX} -submodules qtbase,qtimageformats,qtmultimedia,qtserialport,qtsvg
     cmake --build . --parallel
     cmake --install . ; then
@@ -119,6 +119,7 @@ sleep 5
 
 rsync -arvz /usr/local/js8lib/ ./js8lib/
 
+# MacOS only
 cd /usr/local/js8lib/lib
 install_name_tool -id @rpath/libhamlib.4.dylib libhamlib.4.dylib
 install_name_tool -id @rpath/libusb-1.0.0.dylib libusb-1.0.0.dylib
